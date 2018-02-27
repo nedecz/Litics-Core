@@ -14,6 +14,8 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
+using Litics.API.Middleware;
 
 namespace Litics.API.Controllers
 {
@@ -84,6 +86,8 @@ namespace Litics.API.Controllers
         }
         [HttpPost]
         [Route("register")]
+        [MiddlewareFilter(typeof(SimpleHeaderAuthorizationPipeline))]
+
         public async Task<IActionResult> Register([FromBody]object model)
         {
 

@@ -14,10 +14,14 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -131,8 +135,6 @@ namespace Litics.API
 
             // Repositories
             services.AddScoped<IAccountRepository, AccountRepository>();
-
-
             // Without this controller actions are not forbidden if other roles are trying to access
             services.AddSingleton<IAuthenticationSchemeProvider, CustomAuthenticationSchemeProvider>();
             services.AddSingleton(Configuration);
@@ -149,6 +151,10 @@ namespace Litics.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.Use(async (context, next) => {
+                context.Request.EnableRewind();
+                await next();
+            });
             app.UseAuthentication();
             app.UseMvc();
             CreateRoles(serviceProvider).Wait();

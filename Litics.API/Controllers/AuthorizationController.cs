@@ -126,7 +126,6 @@ namespace Litics.API.Controllers
 
                 claim.SetDestinations(destinations);
             }
-
             return ticket;
         }
     }
